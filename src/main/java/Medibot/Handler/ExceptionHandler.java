@@ -1,4 +1,4 @@
-package Medibot;
+package Medibot.Handler;
 
 import org.springframework.stereotype.Component;
 

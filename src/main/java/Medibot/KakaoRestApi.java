@@ -67,8 +67,9 @@ public class KakaoRestApi {
     public List<HospitalDto> getHospitalInfo(String place, String category){
         try{
             CoordinateDto coordinateDto = getCoordinate(place);
-            String queryString = "?query="+ URLEncoder.encode(category, "UTF-8")+"&radius=1000&size=5"+"&sort=distance"+"&x="+coordinateDto.getX()
-                    +"&y="+coordinateDto.getY()+"&category_group_code=HP8";
+            String queryString = "?query="+ URLEncoder.encode(category, "UTF-8")+"&radius=1000&size=5"+"&sort=distance"
+                    +"&x="+coordinateDto.getX() +"&y="+coordinateDto.getY()
+                    +"&category_group_code=HP8";
             RestTemplate restTemplate = new RestTemplate();
             URI url = URI.create(API_SERVER_HOST+SEARCH_PLACE_KEYWORD_PATH+queryString);
 

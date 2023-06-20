@@ -7,17 +7,24 @@ import Medibot.KakaoRestApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class IndexController {
 
     private final KakaoRestApi kakaoRestApi;
+
+    // 사용자가 입력한 문자열 받기
+    @PostMapping("/question")
+    public Integer question(@RequestBody String question){
+        // restTemplate 이용해서 AI server로 api 요청
+        System.out.println(question);
+        return 0;
+    }
 
     // string 형태의 위치를 정확한 좌표로 바꾸기
     @GetMapping(value = "/place")
