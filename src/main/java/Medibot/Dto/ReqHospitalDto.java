@@ -1,8 +1,9 @@
 package Medibot.Dto;
 
-import lombok.Data;
+import lombok.*;
 
 @Data
+@NoArgsConstructor
 public class ReqHospitalDto {
     private String place;
     private String category;

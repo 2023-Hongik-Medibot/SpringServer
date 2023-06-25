@@ -64,8 +64,9 @@ public class IndexController {
     }
 
     // 키워드 + 위치 기반 병원 정보
-    @GetMapping("/hospital")
+    @PostMapping("/hospital")
     public List<HospitalDto> getHospital(@RequestBody ReqHospitalDto reqHospitalDto){
+        System.out.println(reqHospitalDto.getPlace() + "   " +reqHospitalDto.getCategory());
         return kakaoRestApi.getHospitalInfo(reqHospitalDto.getPlace(), reqHospitalDto.getCategory());
     }
 
