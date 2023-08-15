@@ -51,10 +51,9 @@ public class QuestionService {
         return questionDto;
     }
 
-    public void test(JSONObject jsonObject){
-        JSONObject entities = new JSONObject();
-        entities.appendField("entity", jsonObject.get("entity"));
-        System.out.println(entities);
-    }
+//    public void test(JSONObject jsonObject){
+//        JSONObject entities = new JSONObject();
+//        entities.appendField("entity", jsonObject.get("entity"));
+//    }
 
 }

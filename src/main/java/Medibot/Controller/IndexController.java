@@ -2,6 +2,7 @@ package Medibot.Controller;
 
 import Medibot.Dto.*;
 import Medibot.KakaoRestApi;
+import Medibot.Service.PillService;
 import Medibot.Service.QuestionService;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class IndexController {
 
     private final KakaoRestApi kakaoRestApi;
     private final QuestionService questionService;
+    private final PillService pillService;
 
     // 사용자가 입력한 문자열 받기
     @PostMapping("/question")
@@ -38,20 +40,23 @@ public class IndexController {
     // 키워드 + 위치 기반 병원 정보
     @PostMapping("/hospital")
     public List<HospitalDto> getHospital(@RequestBody ReqHospitalDto reqHospitalDto){
-        System.out.println(reqHospitalDto.getPlace() + "   " +reqHospitalDto.getCategory());
         return kakaoRestApi.getHospitalInfo(reqHospitalDto.getPlace(), reqHospitalDto.getCategory());
     }
 
     @PostMapping("/pharmacy")
     public List<HospitalDto> getPharmacy(@RequestBody String place){
-        System.out.println(place);
         return kakaoRestApi.getPharmacyInfo(place);
     }
 
-    @GetMapping("/test")
-    public void test(@RequestBody JSONObject jsonObject){
-        System.out.println("asfd");
-        questionService.test(jsonObject);
+    @PostMapping("/effect")
+//    public ResPillDto getEffect(@RequestBody String pillName){
+    public void getEffect(@RequestBody String pillName){
+        pillService.getEffect(pillName);
     }
+
+//    @GetMapping("/test")
+//    public void test(@RequestBody JSONObject jsonObject){
+//        questionService.test(jsonObject);
+//    }
 
 }
