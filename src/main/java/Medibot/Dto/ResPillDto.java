@@ -12,7 +12,6 @@ public class ResPillDto {
     private String method; // 복용법
 
     @Builder
-
     public ResPillDto(String name, String efcyQesitm, String sideEffect, String precaution, String method) {
         this.name = name;
         this.efcyQesitm = efcyQesitm;

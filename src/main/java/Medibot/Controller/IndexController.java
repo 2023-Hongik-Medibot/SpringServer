@@ -49,9 +49,9 @@ public class IndexController {
     }
 
     @PostMapping("/effect")
-//    public ResPillDto getEffect(@RequestBody String pillName){
-    public void getEffect(@RequestBody String pillName){
-        pillService.getEffect(pillName);
+    public ResPillDto getEffect(@RequestBody String pillName){
+//    public void getEffect(@RequestBody String pillName){
+        return pillService.getPill(pillName);
     }
 
 //    @GetMapping("/test")

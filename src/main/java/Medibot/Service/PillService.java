@@ -1,8 +1,6 @@
 package Medibot.Service;
 
-import Medibot.Dto.CoordinateDto;
-import Medibot.Dto.KakaoResponse;
-import Medibot.Dto.ResPillDto;
+import Medibot.Dto.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -11,7 +9,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 import java.net.URLEncoder;
 
 @Service
@@ -22,35 +24,49 @@ public class PillService {
 
     private static final String API_HOST  = "http://apis.data.go.kr/1471000/DrbEasyDrugInfoService/getDrbEasyDrugList";
 
-    // public ResPillDto getEffect(String pillName){
-    public void getEffect(String pillName){
+    public ResPillDto getPill(String pillName){
+//    public void getPill(String pillName){
         try{
-            String queryString = "?serviceKey="+ apisApiKey +"&pageNo="+"1"+"&numOfRows="+"1"+"&itemName="+pillName;
-//            String queryString = "?&pageNo="+"1"+"&numOfRows="+"1"+"&itemName="+pillName;
-            RestTemplate restTemplate = new RestTemplate();
-            URI url = URI.create(API_HOST+queryString);
+            StringBuilder urlBuilder = new StringBuilder(API_HOST); /*URL*/
+            urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=" + apisApiKey); /*Service Key*/
+            urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
+            urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*한 페이지 결과 수*/
+            urlBuilder.append("&" + URLEncoder.encode("itemName","UTF-8") + "=" + URLEncoder.encode(pillName, "UTF-8")); /*제품명*/
+            urlBuilder.append("&" + URLEncoder.encode("type","UTF-8") + "=" + URLEncoder.encode("json", "UTF-8")); /*응답데이터 형식(xml/json) Default:xml*/
 
+            URI uri = URI.create(urlBuilder.toString());
 
             // header setting
             HttpHeaders headers = new HttpHeaders();
-//            headers.set("apisApiKey", apisApiKey);
 
             // request
             HttpEntity<?> entity = new HttpEntity<>(headers);
 
+            RestTemplate restTemplate = new RestTemplate();
             HttpEntity<String> response = restTemplate.exchange(
-                    url,
+                    uri,
                     HttpMethod.GET,
                     entity,
                     String.class);
 
             ObjectMapper mapper = new ObjectMapper();
-            // KakaoResponse kakaoResponse = mapper.readValue(response.getBody(), KakaoResponse.class);
-            System.out.println(response.getBody());
+            ApisResponse apisResponse = mapper.readValue(response.getBody(), ApisResponse.class);
+            System.out.println(apisResponse.getBody().getItems().get(0).getEfcyQesitm());
+            Items items = apisResponse.getBody().getItems().get(0);
+
+            ResPillDto resPillDto = ResPillDto.builder()
+                    .name(items.getItemName())
+                    .efcyQesitm(items.getEfcyQesitm())
+                    .method(items.getUseMethodQesitm())
+                    .precaution(items.getAtpnQesitm())
+                    .sideEffect(items.getSeQesitm())
+                    .build();
+
+            return resPillDto;
         }
         catch (Exception e){
             System.out.println("e = " + e);
         }
-
+        return new ResPillDto("","","","","");
     }
 }
