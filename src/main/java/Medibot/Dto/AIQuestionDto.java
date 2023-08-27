@@ -1,12 +1,13 @@
 package Medibot.Dto;
 
 import com.nimbusds.jose.shaded.json.JSONObject;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Data
+@Getter
+@Builder
 @NoArgsConstructor
 public class AIQuestionDto {
 

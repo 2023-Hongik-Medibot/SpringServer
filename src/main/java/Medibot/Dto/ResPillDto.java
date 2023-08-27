@@ -2,8 +2,13 @@ package Medibot.Dto;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Data
+@Getter
+@Builder
+@NoArgsConstructor
 public class ResPillDto {
     private String name;
     private String efcyQesitm; // 효과

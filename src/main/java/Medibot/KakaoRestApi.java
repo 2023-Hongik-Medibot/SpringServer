@@ -1,22 +1,18 @@
 package Medibot;
 
 import Medibot.Dto.CoordinateDto;
-import Medibot.Dto.HospitalDto;
+import Medibot.Dto.HosAndPharDto;
 import Medibot.Dto.KakaoResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -64,7 +60,7 @@ public class KakaoRestApi {
 
     }
 
-    public List<HospitalDto> getHospitalInfo(String place, String category){
+    public List<HosAndPharDto> getHospitalInfo(String place, String category){
         try{
             CoordinateDto coordinateDto = getCoordinate(place);
             String queryString = "?query="+ URLEncoder.encode(category, "UTF-8")+"&radius=1000&size=5"+"&sort=distance"
@@ -89,7 +85,7 @@ public class KakaoRestApi {
             ObjectMapper mapper = new ObjectMapper();
             KakaoResponse kakaoResponse = mapper.readValue(response.getBody(), KakaoResponse.class);
 
-            List<HospitalDto> hospitalDtos = kakaoResponse.getDocuments().stream().map(p->HospitalDto.builder()
+            List<HosAndPharDto> hospitalDtos = kakaoResponse.getDocuments().stream().map(p-> HosAndPharDto.builder()
                     .name(p.getPlaceName())
                     .address(p.getRoadAddressName())
                     .distance(p.getDistance())
@@ -105,7 +101,7 @@ public class KakaoRestApi {
         }
         return new ArrayList<>();
     }
-    public List<HospitalDto> getPharmacyInfo(String place){
+    public List<HosAndPharDto> getPharmacyInfo(String place){
         try{
             CoordinateDto coordinateDto = getCoordinate(place);
             String queryString = "?radius=1000&size=5"+"&sort=distance"+"&x="+coordinateDto.getX()
@@ -129,7 +125,7 @@ public class KakaoRestApi {
             ObjectMapper mapper = new ObjectMapper();
             KakaoResponse kakaoResponse = mapper.readValue(response.getBody(), KakaoResponse.class);
 
-            List<HospitalDto> hospitalDtos = kakaoResponse.getDocuments().stream().map(p->HospitalDto.builder()
+            List<HosAndPharDto> hospitalDtos = kakaoResponse.getDocuments().stream().map(p-> HosAndPharDto.builder()
                             .name(p.getPlaceName())
                             .address(p.getRoadAddressName())
                             .distance(p.getDistance())

@@ -3,6 +3,8 @@ package Medibot.Dto;
 import lombok.*;
 
 @Data
+@Getter
+@Builder
 @NoArgsConstructor
 public class ReqHospitalDto {
     private String place;

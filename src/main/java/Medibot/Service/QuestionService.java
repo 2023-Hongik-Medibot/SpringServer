@@ -19,6 +19,7 @@ public class QuestionService {
     private static final String AI_SERVER_HOST  = "http://ec2-13-209-89-237.ap-northeast-2.compute.amazonaws.com:8000/ask/first/";
 
     public QuestionDto getIntentEntity(String question){
+//    public JSONObject getIntentEntity(String question){
         HashMap<String, Object> resultMap = new HashMap<String, Object>();
         URI url = URI.create(AI_SERVER_HOST);
         URI uri = UriComponentsBuilder
@@ -46,14 +47,15 @@ public class QuestionService {
         JSONObject entities = new JSONObject();
         entities.appendField("entity", response.getBody().get("entity"));
         QuestionDto questionDto = new QuestionDto(intent, entities);
-
-
         return questionDto;
+
+//         JSONObject jsonObject = new JSONObject();
+//         jsonObject.appendField("intent", intent);
+//         jsonObject.appendField("entity", entities);
+//
+//         return jsonObject;
+
     }
 
-//    public void test(JSONObject jsonObject){
-//        JSONObject entities = new JSONObject();
-//        entities.appendField("entity", jsonObject.get("entity"));
-//    }
 
 }

@@ -7,18 +7,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+
 @Data
 @Getter
 @Builder
 @NoArgsConstructor
-public class QuestionDto {
+public class AnswerDto {
 
     private int intent;
-    private JSONObject entity;
+    private String entity;
+    private JSONObject answer;
 
-    public QuestionDto(int intent, JSONObject entity){
+    @Builder
+    public AnswerDto(int intent, String entity, JSONObject answer) {
         this.intent = intent;
         this.entity = entity;
+        this.answer = answer;
     }
-
 }
