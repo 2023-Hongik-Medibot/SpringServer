@@ -1,6 +1,8 @@
 package Medibot.Service;
 
+import Medibot.Domain.Pill;
 import Medibot.Dto.AwsS3;
+import Medibot.Repository.PillRepository;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -13,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,15 +24,21 @@ import java.util.UUID;
 public class AwsS3Service {
 
     private final AmazonS3 amazonS3;
+    private final PillRepository pillRepository;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     public AwsS3 upload(MultipartFile multipartFile, String dirName) throws IOException {
+        System.out.println(multipartFile.getContentType());
         File file = convertMultipartFileToFile(multipartFile)
                 .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File convert fail"));
 
-        System.out.println("service");
+
+//        Pill pill = pillRepository.findByItemName("가스디알정50밀리그램(디메크로틴산마그네슘)");
+        Pill pill = pillRepository.findByShapeAndFrontSignAndAndBackSign("타원형", "LPT", "80");
+
+        System.out.println(pill.getFrontColor());
 
         return upload(file, dirName);
     }
@@ -70,13 +79,18 @@ public class AwsS3Service {
     public Optional<File> convertMultipartFileToFile(MultipartFile multipartFile) throws IOException {
         File file = new File(System.getProperty("user.dir") + "/" + multipartFile.getOriginalFilename());
 
-        if (file.createNewFile()) {
-            try (FileOutputStream fos = new FileOutputStream(file)){
-                fos.write(multipartFile.getBytes());
-            }
-            return Optional.of(file);
-        }
-        return Optional.empty();
+        multipartFile.transferTo(file);
+        return Optional.of(file);
+
+//        File file = new File(System.getProperty("user.dir") + "/" + multipartFile.getOriginalFilename());
+
+//        if (file.createNewFile()) {
+//            try (FileOutputStream fos = new FileOutputStream(file)){
+//                fos.write(multipartFile.getBytes());
+//            }
+//            return Optional.of(file);
+//        }
+//        return Optional.empty();
     }
 
     public void remove(AwsS3 awsS3) {

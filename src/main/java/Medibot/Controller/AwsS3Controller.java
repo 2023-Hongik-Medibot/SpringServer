@@ -17,7 +17,6 @@ public class AwsS3Controller {
 
     @PostMapping("/pillImage")
     public AwsS3 upload(@RequestPart(value="file",required = false) MultipartFile multipartFile) throws IOException {
-        System.out.println(multipartFile);
         return awsS3Service.upload(multipartFile,"upload");
     }
 

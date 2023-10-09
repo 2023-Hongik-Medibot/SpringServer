@@ -1,7 +1,9 @@
 package Medibot.Service;
 
 import Medibot.Dto.*;
+import Medibot.Repository.PillRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -9,11 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
 import java.net.URLEncoder;
 
 @Service
@@ -21,6 +19,8 @@ public class PillService {
 
     @Value("${apis.restapi.key}")
     private String apisApiKey;
+
+//    private PillRepository pillRepository;
 
     private static final String API_HOST  = "http://apis.data.go.kr/1471000/DrbEasyDrugInfoService/getDrbEasyDrugList";
 
