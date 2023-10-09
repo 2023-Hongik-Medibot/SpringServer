@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -27,8 +28,19 @@ public class IndexController {
     @PostMapping("/question")
     public AnswerDto question(@RequestBody String question){
 
-        QuestionDto questionDto = questionService.getIntentEntity(question);
+//        QuestionDto questionDto = questionService.getIntentEntity(question);
 //        JSONObject jsonObject = questionService.getIntentEntity(question);
+
+        List<String> array = new ArrayList<>();
+        array.add("탁센");
+
+        JSONObject entity = new JSONObject();
+        entity.appendField("entity", array);
+
+        QuestionDto questionDto = QuestionDto.builder()
+                .intent(3)
+                .entity(entity)
+                .build();
 
         int intent = questionDto.getIntent();       // 의도
 //        int intent = questionDto.get("intent");   // 의도
