@@ -28,22 +28,10 @@ public class IndexController {
     @PostMapping("/question")
     public AnswerDto question(@RequestBody String question){
 
-//        QuestionDto questionDto = questionService.getIntentEntity(question);
+        QuestionDto questionDto = questionService.getIntentEntity(question);
 //        JSONObject jsonObject = questionService.getIntentEntity(question);
 
-        List<String> array = new ArrayList<>();
-        array.add("탁센");
-
-        JSONObject entity = new JSONObject();
-        entity.appendField("entity", array);
-
-        QuestionDto questionDto = QuestionDto.builder()
-                .intent(3)
-                .entity(entity)
-                .build();
-
-        int intent = questionDto.getIntent();       // 의도
-//        int intent = questionDto.get("intent");   // 의도
+        int intent = questionDto.getIntent();   // 의도
 
         if(intent == 0){                        // 약 주의사항
 
@@ -134,12 +122,6 @@ public class IndexController {
         return new AnswerDto();
     }
 
-    // string 형태의 위치를 정확한 좌표로 바꾸기
-//    @GetMapping(value = "/place")
-//    public CoordinateDto getKeywordLocation(@RequestBody String place){
-//       return kakaoRestApi.getCoordinate(place);
-//    }
-
     // 키워드 + 위치 기반 병원 정보
     @PostMapping("/hospital")
     public List<HosAndPharDto> getHospital(@RequestBody ReqHospitalDto reqHospitalDto){
@@ -154,54 +136,6 @@ public class IndexController {
     @PostMapping("/effect")
     public ResPillDto getEffect(@RequestBody String pillName){
         return pillService.getPill(pillName);
-    }
-
-//    @GetMapping("/test")
-//    public JSONObject test(){
-//        AnswerDto answerDto = new AnswerDto(0, "게보린", "게보린의 주의사항에 대한 답변입니다.");
-//        ObjectMapper mapper = new ObjectMapper();
-//
-//        try {
-//            //Object to JSON in String
-//            String jsonInString = mapper.writeValueAsString(answerDto);
-//            System.out.println(jsonInString);
-//
-//            JSONParser parser = new JSONParser();
-//            JSONObject jsonObject = (JSONObject) parser.parse(jsonInString);
-//
-//            return jsonObject;
-//        }
-//        catch (Exception e){
-//            System.out.println(e);
-//        }
-//        return new JSONObject();
-//    }
-
-    @ResponseBody
-    @GetMapping(value = "/test2", produces = "application/json;charset=UTF-8")
-    public void test2(@RequestBody QuestionDto object){
-//    public String test2(@RequestBody QuestionDto object){
-        JSONObject entity = new JSONObject();
-
-
-//        if (object.get("intent").equals("0")){
-//            // 약 주의사항, 부작용, 약국 등등
-//            ArrayList<String> rArray = new ArrayList<>();
-//            rArray = (ArrayList<String>) object.get("entity");
-//            String pillName = rArray.get(0);
-//            return pillName;
-//        }
-//        else{
-            // 병원
-        JSONObject hospital = object.getEntity();
-        ArrayList<String> location = (ArrayList<String>) hospital.get("장소");
-        ArrayList<String> category = (ArrayList<String>) hospital.get("병원");
-        System.out.println(location.get(0));
-        System.out.println(location.get(0).getClass());
-
-
-//        }
-
     }
 
 
