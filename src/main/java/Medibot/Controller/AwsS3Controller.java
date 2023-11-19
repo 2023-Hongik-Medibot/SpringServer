@@ -7,6 +7,7 @@ import Medibot.Dto.pillNameAndImageUrlDto;
 import Medibot.Service.AwsS3Service;
 import Medibot.Service.PillService;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Test;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,10 +33,13 @@ public class AwsS3Controller {
 
         // Test
 //        List<String> urls = new ArrayList<>();
-//        urls.add("https://medibot2023.s3.ap-northeast-2.amazonaws.com/upload/71afa621-407b-4c14-8f87-a937fca221b2javascriptLogo.jpeg");
-//        urls.add("https://medibot2023.s3.ap-northeast-2.amazonaws.com/upload/767c33ff-b70c-4f80-8dcf-407a4b14904djavascriptLogo.jpeg");
+//        List<String> pillNames = new ArrayList<>();
+//        pillNames.add("타이레놀");
+//        pillNames.add("타세놀");
+//        urls.add("https://medibot2023.s3.ap-northeast-2.amazonaws.com/upload/5dc15cb9-b5e3-469f-8d45-e061c1c220aftestPill2.jpeg");
+//        urls.add("https://medibot2023.s3.ap-northeast-2.amazonaws.com/upload/7fcd17dd-9625-4958-b169-df88d88b0724testPill.jpeg");
 //        pillNameAndImageUrlDto pillNameAndImageUrlDto = Medibot.Dto.pillNameAndImageUrlDto.builder()
-//                .pillName("타이레놀")
+//                .pillName(pillNames)
 //                .imageUrls(urls)
 //                .build();
 

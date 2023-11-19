@@ -4,6 +4,7 @@ import Medibot.Domain.Pill;
 import Medibot.Dto.AwsS3;
 import Medibot.Dto.pillImageResponseDto;
 import Medibot.Dto.pillNameAndImageUrlDto;
+import Medibot.Exception.NotFoundPillException;
 import Medibot.Repository.PillRepository;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
@@ -34,7 +35,7 @@ public class AwsS3Service {
     private final AmazonS3 amazonS3;
     private final PillRepository pillRepository;
 
-    private static final String AI_SERVER_HOST  = "http://ec2-13-209-89-237.ap-northeast-2.compute.amazonaws.com:8000/ask/first/";
+    private static final String AI_SERVER_HOST  = "http://ec2-3-38-149-188.ap-northeast-2.compute.amazonaws.com:8000/pill/classficiation/";
 
 
     @Value("${cloud.aws.s3.bucket}")
@@ -44,7 +45,7 @@ public class AwsS3Service {
 //    public List<AwsS3> upload(List<MultipartFile> multipartFile, String dirName) throws IOException {
 
         List<String> urls = new ArrayList<>();
-        List<AwsS3> awsS3s = new ArrayList<>();
+        List<JSONObject> awsS3s = new ArrayList<>();
 
         multipartFile.stream()
                 .forEach((multipartFile1 -> {
@@ -53,7 +54,11 @@ public class AwsS3Service {
                                 .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File convert fail"));
 
                         AwsS3 awsS3 = upload(file, dirName);
-                        awsS3s.add(awsS3);
+
+                        JSONObject tmp = new JSONObject();
+                        tmp.put("key", awsS3.getKey());
+
+                        awsS3s.add(tmp);
 
                         urls.add(awsS3.getPath());
 
@@ -61,26 +66,27 @@ public class AwsS3Service {
                         e.printStackTrace();
                     }
                 }));
+        System.out.println(awsS3s.get(0));
 
-        String pillName = getPillName(awsS3s);
+        List<String> pills = getPillName(awsS3s);
+//
+//        return pillNameAndImageUrlDto.builder()
+//                .pillName(pillName)
+//                .imageUrls(urls)
+//                .build();
+
 
         return pillNameAndImageUrlDto.builder()
-                .pillName(pillName)
+                .pillName(pills)
                 .imageUrls(urls)
                 .build();
-
-
-//        return pillImageResponseDto.builder()
-//                .s3path(urls)
-//                .pillName(pillName)
-//                .build();
-//        return pillImageResponseDto.builder()
-//                .s3path(urls)
+//        return pillNameAndImageUrlDto.builder()
+//                .imageUrls(urls)
 //                .pillName("타이레놀")
 //                .build();
     }
 
-    private String getPillName(List<AwsS3> awsS3){
+    private List<String> getPillName(List<JSONObject> awsS3){
         URI url = URI.create(AI_SERVER_HOST);
 
         RestTemplate restTemplate = new RestTemplate();
@@ -90,20 +96,21 @@ public class AwsS3Service {
 
         JSONObject body = new JSONObject();
 
-        body.put("body", awsS3);
+        body.put("image", awsS3);
 
         HttpEntity<String> entity = new HttpEntity<>(body.toString(), headers);
 
+        System.out.println(body);
+
         ResponseEntity<JSONObject> response = restTemplate.exchange(url, HttpMethod.POST, entity, JSONObject.class);
 
-        // DB에서 해당 특징 가진 알약 구분하기
-        String pillShape = response.getBody().get("shape").toString();
-        String frontSign = response.getBody().get("frontSign").toString();
-        String backSign = response.getBody().get("backSign").toString();
+        List<String> pills = (List<String>) response.getBody().get("result");
 
-        Pill thepill = pillRepository.findByShapeAndFrontSignAndAndBackSign(pillShape, frontSign, backSign);
+        if(pills.size() == 0){
+            throw new NotFoundPillException();
+        }
 
-        return thepill.getItemName();
+        return pills;
     }
 
     private AwsS3 upload(File file, String dirName) {
@@ -120,7 +127,8 @@ public class AwsS3Service {
     }
 
     private String randomFileName(File file, String dirName) {
-        return dirName + "/" + UUID.randomUUID() + file.getName();
+        return dirName + UUID.randomUUID() + file.getName();
+//        return dirName + "/" + UUID.randomUUID() + file.getName();
     }
 
     private String putS3(File uploadFile, String fileName) {

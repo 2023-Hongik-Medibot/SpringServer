@@ -10,12 +10,12 @@ import java.util.List;
 @NoArgsConstructor
 public class pillNameAndImageUrlDto {
 
-    private String pillName;
+    private List<String> pillName;
 
     private List<String> imageUrls;
 
     @Builder
-    public pillNameAndImageUrlDto(String pillName, List<String> imageUrls) {
+    public pillNameAndImageUrlDto(List<String> pillName, List<String> imageUrls) {
         this.pillName = pillName;
         this.imageUrls = imageUrls;
     }
