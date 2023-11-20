@@ -62,6 +62,11 @@ public class PillService {
             System.out.println(apisResponse.getBody().getItems().get(0).getEfcyQesitm());
             Items items = apisResponse.getBody().getItems().get(0);
 
+            if(apisResponse.getBody().getItems().isEmpty()){
+                return ResPillDto.builder()
+                        .build();
+            }
+
             ResPillDto resPillDto = ResPillDto.builder()
                     .name(items.getItemName())
                     .efcyQesitm(items.getEfcyQesitm())

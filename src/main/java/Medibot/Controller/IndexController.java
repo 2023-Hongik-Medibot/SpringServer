@@ -31,16 +31,24 @@ public class IndexController {
 
         // Real
         QuestionDto questionDto = questionService.getIntentEntity(question);
-//        JSONObject jsonObject = questionService.getIntentEntity(question);
 
         //test
-//        JSONObject entity = new JSONObject();
-//        List<String> pharmacy1 = new ArrayList<>();
-//        pharmacy1.add("휴스나정");
-//        entity.put("entity", pharmacy1);
+//        JSONObject body = new JSONObject();
+//        List<String> entity = new ArrayList<>();
+//        entity.add("그날엔");
+//        LinkedHashMap<String, List<String>> entity = new LinkedHashMap<>();
+//
+//        List<String> loc = new ArrayList<>();
+//        loc.add("서울대입구");
+//        entity.put("장소", loc);
+//        List<String> hos = new ArrayList<>();
+//        hos.add("안과");
+//        entity.put("병원", hos);
+//        body.put("entity", entity);
+//
 //        QuestionDto questionDto = QuestionDto.builder()
 //                .intent(0)
-//                .entity(entity)
+//                .entity(body)
 //                .build();
 
         int intent = questionDto.getIntent();
@@ -62,6 +70,11 @@ public class IndexController {
             }
             else if(intent == 1){                       // 약국 정보
                 ArrayList<String> rArray = (ArrayList<String>) questionDto.getEntity().get("entity");
+
+                if(rArray.isEmpty()){
+                    return new AnswerDto(1, null,null);
+                }
+
                 String location = rArray.get(0);
 
                 List<HosAndPharDto> pharmacy = kakaoRestApi.getPharmacyInfo(location); // kakao api 통해 약국 정보 받아오기
@@ -73,34 +86,41 @@ public class IndexController {
                 return answerDto;
             }
             else if(intent == 2){                       // 병원 정보
-            LinkedHashMap<String, List<String>> hospitalEntity = new LinkedHashMap<>();
-            hospitalEntity = (LinkedHashMap<String, List<String>>) questionDto.getEntity().get("entity");
-//                JSONObject hos = questionDto.getEntity();
-//                System.out.println(hos);
-//                JSONObject hos1 = hos.get("entity");
-//                System.out.println(hos1);
+                LinkedHashMap<String, List<String>> hospitalEntity = new LinkedHashMap<>();
+                hospitalEntity = (LinkedHashMap<String, List<String>>) questionDto.getEntity().get("entity");
+;
                 ArrayList<String> arrayLocation = (ArrayList<String>) hospitalEntity.get("장소");
-                System.out.println(arrayLocation);
+                System.out.println("장소는 "+arrayLocation);
                 ArrayList<String> arrayCategory = (ArrayList<String>) hospitalEntity.get("병원");
-                System.out.println(arrayCategory);
+                System.out.println("병원은 "+arrayCategory);
 
-//            ArrayList<String> error1 = new ArrayList<>();
-//            error1.add("비");
-//            error1.add("이인후과");
+                if(arrayLocation.isEmpty() && !arrayCategory.isEmpty()){ // 장소 개체명이 안 넘어올 때,
+                    JSONObject answer = new JSONObject();
+                    answer.put("hospital", 21);
+                    return new AnswerDto(2, arrayCategory.get(0) ,answer);
+                }
+                else if(arrayCategory.isEmpty() && !arrayLocation.isEmpty()){   // 병원 개체명이 안 넘어올 때
+                    JSONObject answer = new JSONObject();
+                    answer.put("hospital", 22);
+                    return new AnswerDto(2, arrayLocation.get(0), answer);
+                }
+                else if(arrayCategory.isEmpty() && arrayLocation.isEmpty()){
+                    return new AnswerDto(2, null, null);
+                }
+                else {
+                    String location = arrayLocation.get(0);
+                    String category = arrayCategory.get(0);
 
+                    List<HosAndPharDto> hospital = kakaoRestApi.getHospitalInfo(location, category); // kakao api 통해 병원 정보 받아오기
 
-                String location = arrayLocation.get(0);
-                String category = arrayCategory.get(0);
+                    JSONObject hospitals = new JSONObject();
+                    hospitals.appendField("hospital", hospital);
 
-                List<HosAndPharDto> hospital = kakaoRestApi.getHospitalInfo(location, category); // kakao api 통해 병원 정보 받아오기
+                    String locationAndCategory = location + " " + category;
+                    AnswerDto answerDto = new AnswerDto(intent, locationAndCategory, hospitals);
 
-                JSONObject hospitals = new JSONObject();
-                hospitals.appendField("hospital", hospital);
-
-                String locationAndCategory = location + " " + category;
-                AnswerDto answerDto = new AnswerDto(intent, locationAndCategory, hospitals);
-
-                return answerDto;
+                    return answerDto;
+                }
 
             }
             else if(intent == 3){                       // 부작용
@@ -166,14 +186,35 @@ public class IndexController {
     }
 
     // 키워드 + 위치 기반 병원 정보
-    @PostMapping("/hospital")
-    public List<HosAndPharDto> getHospital(@RequestBody ReqHospitalDto reqHospitalDto){
+    @PostMapping("/hospital/location")
+    public List<HosAndPharDto> getHospital_location(@RequestBody ReqHospitalDto reqHospitalDto){
         return kakaoRestApi.getHospitalInfo(reqHospitalDto.getPlace(), reqHospitalDto.getCategory());
     }
 
+    @PostMapping("/hospital")
+    public AnswerDto getHospital(@RequestBody ReqHospitalDto reqHospitalDto){
+        String location = reqHospitalDto.getPlace();
+        String category = reqHospitalDto.getCategory();
+
+        List<HosAndPharDto> hospital = kakaoRestApi.getHospitalInfo(location, category); // kakao api 통해 병원 정보 받아오기
+
+        JSONObject hospitals = new JSONObject();
+        hospitals.appendField("hospital", hospital);
+
+        String locationAndCategory = location + " " + category;
+        AnswerDto answerDto = new AnswerDto(2, locationAndCategory, hospitals);
+
+        return answerDto;
+    }
+
     @PostMapping("/pharmacy")
-    public List<HosAndPharDto> getPharmacy(@RequestBody String place){
-        return kakaoRestApi.getPharmacyInfo(place);
+    public AnswerDto getPharmacy(@RequestBody String place){
+        List<HosAndPharDto> pharmacy = kakaoRestApi.getPharmacyInfo(place);
+        JSONObject pharmacies = new JSONObject();
+        pharmacies.appendField("pharmacy", pharmacy);
+
+        AnswerDto answerDto = new AnswerDto(1, place, pharmacies);
+        return answerDto;
     }
 
     @PostMapping("/effect")
