@@ -126,19 +126,27 @@ public class PillService {
                 ApisResponse apisResponse = mapper.readValue(response.getBody(), ApisResponse.class);
                 List<Items> items = apisResponse.getBody().getItems();
 
-                Items items1 = items.get(0);
+                if(items == null){
+                    pillImageResponseDto pillImage = pillImageResponseDto.builder()
+                            .s3path(pillNameAndImageUrlDto.getImageUrls())
+                            .build();
+                    responseDtos.add(pillImage);
+                }
+                else{
+                    Items items1 = items.get(0);
 
-                pillImageResponseDto pillImage = pillImageResponseDto.builder()
-                        .s3path(pillNameAndImageUrlDto.getImageUrls())
-                        .pillName(items1.getItemName())
-                        .pillImage(items1.getItemImage())
-                        .efcyQesitm(items1.getEfcyQesitm())
-                        .method(items1.getUseMethodQesitm())
-                        .precaution(items1.getAtpnQesitm())
-                        .sideEffect(items1.getSeQesitm())
-                        .build();
+                    pillImageResponseDto pillImage = pillImageResponseDto.builder()
+                            .s3path(pillNameAndImageUrlDto.getImageUrls())
+                            .pillName(items1.getItemName())
+                            .pillImage(items1.getItemImage())
+                            .efcyQesitm(items1.getEfcyQesitm())
+                            .method(items1.getUseMethodQesitm())
+                            .precaution(items1.getAtpnQesitm())
+                            .sideEffect(items1.getSeQesitm())
+                            .build();
 
-                responseDtos.add(pillImage);
+                    responseDtos.add(pillImage);
+                }
             }
 
 

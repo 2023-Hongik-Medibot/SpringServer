@@ -28,6 +28,8 @@ public class AwsS3Controller {
     public List<pillImageResponseDto> upload(@RequestPart(required = false) List<MultipartFile> multipartFile) throws IOException {
 //    public List<AwsS3> upload(@RequestPart(required = false) List<MultipartFile> multipartFile) throws IOException {
 
+        System.out.println(multipartFile.size());
+        System.out.println(multipartFile);
         // Real
         pillNameAndImageUrlDto pillNameAndImageUrlDto = awsS3Service.upload(multipartFile,"upload");
 

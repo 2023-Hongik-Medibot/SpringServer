@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 public class QuestionService {
 
-    private static final String AI_SERVER_HOST  = "http://ec2-3-39-252-58.ap-northeast-2.compute.amazonaws.com:8000/ask/first/";
+    private static final String AI_SERVER_HOST  = "http://ec2-3-36-26-199.ap-northeast-2.compute.amazonaws.com:8000/ask/first/";
 
     public QuestionDto getIntentEntity(String question){
 //    public JSONObject getIntentEntity(String question){

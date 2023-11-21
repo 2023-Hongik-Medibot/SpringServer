@@ -29,7 +29,7 @@ public class AwsS3Service {
 
     private final AmazonS3 amazonS3;
 
-    private static final String AI_SERVER_HOST  = "http://ec2-3-39-252-58.ap-northeast-2.compute.amazonaws.com:8000/pill/classficiation/";
+    private static final String AI_SERVER_HOST  = "http://ec2-3-36-26-199.ap-northeast-2.compute.amazonaws.com:8000/pill/classficiation/";
 
 
     @Value("${cloud.aws.s3.bucket}")
@@ -65,19 +65,18 @@ public class AwsS3Service {
         List<String> pills = getPillName(awsS3s);
 //
 //        return pillNameAndImageUrlDto.builder()
-//                .pillName(pillName)
+//                .pillName(pills)
 //                .imageUrls(urls)
 //                .build();
 
+//        List<String> pills = new ArrayList<>();
+//        pills.add("화이투벤큐");
+//        pills.add("마그놀정");
 
         return pillNameAndImageUrlDto.builder()
                 .pillName(pills)
                 .imageUrls(urls)
                 .build();
-//        return pillNameAndImageUrlDto.builder()
-//                .imageUrls(urls)
-//                .pillName("타이레놀")
-//                .build();
     }
 
     private List<String> getPillName(List<JSONObject> awsS3){
