@@ -35,7 +35,7 @@ public class AwsS3Service {
     private final AmazonS3 amazonS3;
     private final PillRepository pillRepository;
 
-    private static final String AI_SERVER_HOST  = "http://ec2-3-38-149-188.ap-northeast-2.compute.amazonaws.com:8000/pill/classficiation/";
+    private static final String AI_SERVER_HOST  = "http://ec2-3-39-252-58.ap-northeast-2.compute.amazonaws.com:8000/pill/classficiation/";
 
 
     @Value("${cloud.aws.s3.bucket}")
