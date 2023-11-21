@@ -17,8 +17,9 @@ public class WebMvcConfig implements WebMvcConfigurer{
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-//                .allowCredentials(true)
-                .allowedOrigins("https://dlwlals1289.github.io")
+//                #.allowCredentials(true)
+                .allowedOrigins("*")
+                .allowedHeaders("Authorization","Content-Type")
                 .allowedMethods("GET", "POST")
                 .allowedOriginPatterns("*");
 //        WebMvcConfigurer.super.addCorsMappings(registry);
@@ -44,6 +45,7 @@ public class WebMvcConfig implements WebMvcConfigurer{
 
         config.setAllowCredentials(true);
         config.setAllowedOrigins(Arrays.asList("http://dlwlals1289.github.io"));
+        config.setAllowedOrigins(Arrays.asList("https://dlwlals1289.github.io"));
         config.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT"));
         config.setAllowedHeaders(Arrays.asList("*"));
 
