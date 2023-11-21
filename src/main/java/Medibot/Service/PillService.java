@@ -2,11 +2,9 @@ package Medibot.Service;
 
 import Medibot.Dto.*;
 import Medibot.Exception.NotFoundPillException;
-import Medibot.Repository.PillRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,15 +17,12 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PillService {
 
     @Value("${apis.restapi.key}")
     private String apisApiKey;
-
-//    private PillRepository pillRepository;
 
     private static final String API_HOST  = "http://apis.data.go.kr/1471000/DrbEasyDrugInfoService/getDrbEasyDrugList";
 
@@ -59,13 +54,15 @@ public class PillService {
             ObjectMapper mapper = new ObjectMapper();
             ApisResponse apisResponse = mapper.readValue(response.getBody(), ApisResponse.class);
             System.out.println(apisResponse.getBody());
-            System.out.println(apisResponse.getBody().getItems().get(0).getEfcyQesitm());
-            Items items = apisResponse.getBody().getItems().get(0);
+            System.out.println(apisResponse.getBody().getItems());
 
-            if(apisResponse.getBody().getItems().isEmpty()){
+
+            if(apisResponse.getBody().getItems() == null){
+                System.out.println("ififififi");
                 return ResPillDto.builder()
                         .build();
             }
+            Items items = apisResponse.getBody().getItems().get(0);
 
             ResPillDto resPillDto = ResPillDto.builder()
                     .name(items.getItemName())

@@ -1,11 +1,8 @@
 package Medibot.Service;
 
-import Medibot.Domain.Pill;
 import Medibot.Dto.AwsS3;
-import Medibot.Dto.pillImageResponseDto;
 import Medibot.Dto.pillNameAndImageUrlDto;
 import Medibot.Exception.NotFoundPillException;
-import Medibot.Repository.PillRepository;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -19,21 +16,18 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AwsS3Service {
 
     private final AmazonS3 amazonS3;
-    private final PillRepository pillRepository;
 
     private static final String AI_SERVER_HOST  = "http://ec2-3-39-252-58.ap-northeast-2.compute.amazonaws.com:8000/pill/classficiation/";
 

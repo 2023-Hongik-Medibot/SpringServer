@@ -18,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/s3")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class AwsS3Controller {
 
     private final AwsS3Service awsS3Service;
