@@ -59,6 +59,10 @@ public class IndexController {
             if(intent == 0){                        // 약 주의사항
 
                 ArrayList<String> rArray = (ArrayList<String>) questionDto.getEntity().get("entity");
+
+                if(rArray.isEmpty()){
+                    return new AnswerDto(0,null,null);
+                }
                 String pillName = rArray.get(0);
 
                 ResPillDto resPillDto = pillService.getPill(pillName);
@@ -128,6 +132,11 @@ public class IndexController {
             else if(intent == 3){                       // 부작용
 
                 ArrayList<String> rArray = (ArrayList<String>) questionDto.getEntity().get("entity");
+
+                if(rArray.isEmpty()){
+                    return new AnswerDto(0,null,null);
+                }
+
                 String pillName = rArray.get(0);
 
                 ResPillDto resPillDto = pillService.getPill(pillName);
@@ -141,6 +150,10 @@ public class IndexController {
             else if(intent == 4){                       // 효과
 
                 ArrayList<String> rArray = (ArrayList<String>) questionDto.getEntity().get("entity");
+                if(rArray.isEmpty()){
+                    return new AnswerDto(0,null,null);
+                }
+
                 String pillName = rArray.get(0);
 
                 ResPillDto resPillDto = pillService.getPill(pillName);
@@ -154,6 +167,10 @@ public class IndexController {
             else if(intent == 5){                       // 복용 방법
 
                 ArrayList<String> rArray = (ArrayList<String>) questionDto.getEntity().get("entity");
+                if(rArray.isEmpty()){
+                    return new AnswerDto(0,null,null);
+                }
+
                 String pillName = rArray.get(0);
 
                 ResPillDto resPillDto = pillService.getPill(pillName);
@@ -219,10 +236,50 @@ public class IndexController {
         return answerDto;
     }
 
-    @PostMapping("/effect")
-    public ResPillDto getEffect(@RequestBody String pillName){
-        return pillService.getPill(pillName);
+    @PostMapping("/precaution")
+    public AnswerDto getWarning(@RequestBody String pillName){
+        ResPillDto resPillDto = pillService.getPill(pillName);
+        JSONObject precaution = new JSONObject();
+        precaution.appendField("precaution", resPillDto.getMethod());
+
+        AnswerDto answerDto = new AnswerDto(0, pillName, precaution);
+
+        return answerDto;
+
     }
+
+    @PostMapping("/sideEffect")
+    public AnswerDto getSideEffect(@RequestBody String pillName){
+        ResPillDto resPillDto = pillService.getPill(pillName);
+        JSONObject sideEffect = new JSONObject();
+        sideEffect.appendField("sideEffect", resPillDto.getSideEffect());
+
+        AnswerDto answerDto = new AnswerDto(3, pillName, sideEffect);
+
+        return answerDto;
+    }
+
+    @PostMapping("/effect")
+    public AnswerDto getEffect(@RequestBody String pillName){
+        ResPillDto resPillDto = pillService.getPill(pillName);
+        JSONObject sideEffect = new JSONObject();
+        sideEffect.appendField("sideEffect", resPillDto.getSideEffect());
+
+        AnswerDto answerDto = new AnswerDto(4, pillName, sideEffect);
+
+        return answerDto;
+    }
+    @PostMapping("/method")
+    public AnswerDto getmethod(@RequestBody String pillName){
+        ResPillDto resPillDto = pillService.getPill(pillName);
+        JSONObject efcyQesitm = new JSONObject();
+        efcyQesitm.appendField("efcyQesitm", resPillDto.getEfcyQesitm());
+
+        AnswerDto answerDto = new AnswerDto(5, pillName, efcyQesitm);
+
+        return answerDto;
+    }
+
 
 
 }
