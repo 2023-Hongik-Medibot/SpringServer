@@ -42,6 +42,7 @@ public class QuestionService {
         resultMap.put("request body", body.toString());
 
         ResponseEntity<JSONObject> response = restTemplate.exchange(url, HttpMethod.POST, entity, JSONObject.class);
+        System.out.println("질문에 대한 의도, 개체명 받아오기 완료");
         int intent = Integer.parseInt(response.getBody().get("intent").toString());
 
         JSONObject entities = new JSONObject();

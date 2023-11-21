@@ -28,6 +28,7 @@ public class IndexController {
     // 사용자가 입력한 문자열 받기
     @PostMapping("/question")
     public AnswerDto question(@RequestBody String question){
+        System.out.println(question);
 
         // Real
         QuestionDto questionDto = questionService.getIntentEntity(question);
@@ -52,6 +53,7 @@ public class IndexController {
 //                .build();
 
         int intent = questionDto.getIntent();
+        System.out.println("의도는 " + intent);
 
         try {
             if(intent == 0){                        // 약 주의사항
