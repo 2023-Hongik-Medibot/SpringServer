@@ -46,6 +46,7 @@ public class WebMvcConfig implements WebMvcConfigurer{
         config.setAllowCredentials(true);
         config.setAllowedOrigins(Arrays.asList("http://dlwlals1289.github.io"));
         config.setAllowedOrigins(Arrays.asList("https://dlwlals1289.github.io"));
+        config.setAllowedOrigins(Arrays.asList("https://medibot.site"));
         config.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT"));
         config.setAllowedHeaders(Arrays.asList("*"));
 

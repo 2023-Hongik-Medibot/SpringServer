@@ -1,11 +1,9 @@
 package Medibot.Controller;
 
-import Medibot.Dto.AwsS3;
-import Medibot.Dto.ResPillDto;
-import Medibot.Dto.pillImageResponseDto;
-import Medibot.Dto.pillNameAndImageUrlDto;
+import Medibot.Dto.*;
 import Medibot.Service.AwsS3Service;
 import Medibot.Service.PillService;
+import com.nimbusds.jose.shaded.json.parser.ParseException;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.weaver.ast.Test;
 import org.springframework.web.bind.annotation.*;
@@ -25,13 +23,13 @@ public class AwsS3Controller {
     private final PillService pillService;
 
     @PostMapping("/pillImage")
-    public List<pillImageResponseDto> upload(@RequestPart(required = false) List<MultipartFile> multipartFile) throws IOException {
+    public List<pillImageResponseDto> upload(@RequestPart(required = false) List<MultipartFile> multipartFile) throws IOException, ParseException {
 //    public List<AwsS3> upload(@RequestPart(required = false) List<MultipartFile> multipartFile) throws IOException {
 
         System.out.println(multipartFile.size());
         System.out.println(multipartFile);
         // Real
-        pillNameAndImageUrlDto pillNameAndImageUrlDto = awsS3Service.upload(multipartFile,"upload");
+        List<AIPillINameAndImageDto> pillNameAndImageUrlDto = awsS3Service.upload(multipartFile,"upload");
 
 
         // Test

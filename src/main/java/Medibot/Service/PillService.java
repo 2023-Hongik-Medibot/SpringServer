@@ -17,6 +17,7 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PillService {
@@ -92,12 +93,19 @@ public class PillService {
         return new ResPillDto("","","","","");
     }
 
-    public List<pillImageResponseDto> pillInfo(pillNameAndImageUrlDto pillNameAndImageUrlDto){
+    public List<pillImageResponseDto> pillInfo(List<AIPillINameAndImageDto> pillNameAndImageUrlDto){
         try{
 
-            List<String> pillNames = pillNameAndImageUrlDto.getPillName();
-            System.out.println(pillNames);
+            List<String> pillNames = pillNameAndImageUrlDto.stream()
+                    .map((p) -> p.getPillName())
+                    .collect(Collectors.toList());
+            List<String> pillImageUrl = pillNameAndImageUrlDto.stream()
+                    .map((p) -> p.getPillImageUrl())
+                    .collect(Collectors.toList());
+
             List<pillImageResponseDto> responseDtos = new ArrayList<>();
+
+
 
             for(int i = 0; i<pillNames.size(); i++){
                 StringBuilder urlBuilder = new StringBuilder(API_HOST); /*URL*/
@@ -128,7 +136,8 @@ public class PillService {
 
                 if(items == null){
                     pillImageResponseDto pillImage = pillImageResponseDto.builder()
-                            .s3path(pillNameAndImageUrlDto.getImageUrls())
+                            .pillName(pillNames.get(i))
+                            .pillImage(pillImageUrl.get(i))
                             .build();
                     responseDtos.add(pillImage);
                 }
@@ -136,9 +145,8 @@ public class PillService {
                     Items items1 = items.get(0);
 
                     pillImageResponseDto pillImage = pillImageResponseDto.builder()
-                            .s3path(pillNameAndImageUrlDto.getImageUrls())
                             .pillName(items1.getItemName())
-                            .pillImage(items1.getItemImage())
+                            .pillImage(pillImageUrl.get(i))
                             .efcyQesitm(items1.getEfcyQesitm())
                             .method(items1.getUseMethodQesitm())
                             .precaution(items1.getAtpnQesitm())
@@ -155,7 +163,6 @@ public class PillService {
         catch (Exception e){
             List<pillImageResponseDto> responseDtos = new ArrayList<>();
             pillImageResponseDto pillImage = pillImageResponseDto.builder()
-                    .s3path(pillNameAndImageUrlDto.getImageUrls())
                     .build();
             System.out.println("e = " + e);
             responseDtos.add(pillImage);

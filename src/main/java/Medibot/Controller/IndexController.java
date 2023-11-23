@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(originPatterns= "https://dlwlals1289.github.io", allowedHeaders = "*")
+@CrossOrigin(originPatterns= "https://medibot.site", allowedHeaders = "*")
 public class IndexController {
 
     private final KakaoRestApi kakaoRestApi;

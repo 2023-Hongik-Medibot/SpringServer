@@ -1,5 +1,6 @@
 package Medibot.Service;
 
+import Medibot.Dto.AIPillINameAndImageDto;
 import Medibot.Dto.AwsS3;
 import Medibot.Dto.pillNameAndImageUrlDto;
 import Medibot.Exception.NotFoundPillException;
@@ -8,7 +9,10 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nimbusds.jose.shaded.json.JSONObject;
+import com.nimbusds.jose.shaded.json.parser.JSONParser;
+import com.nimbusds.jose.shaded.json.parser.ParseException;
 import lombok.RequiredArgsConstructor;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,13 +34,14 @@ public class AwsS3Service {
 
     private final AmazonS3 amazonS3;
 
-    private static final String AI_SERVER_HOST  = "http://ec2-13-125-61-29.ap-northeast-2.compute.amazonaws.com:8000/pill/classficiation/";
+    private static final String AI_SERVER_HOST  = "http://ec2-52-78-153-66.ap-northeast-2.compute.amazonaws.com:8000/pill/classficiation/";
 
+    ObjectMapper mapper = new ObjectMapper();
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public pillNameAndImageUrlDto upload(List<MultipartFile> multipartFile, String dirName) throws IOException {
+    public List<AIPillINameAndImageDto> upload(List<MultipartFile> multipartFile, String dirName) throws IOException, ParseException {
 //    public List<AwsS3> upload(List<MultipartFile> multipartFile, String dirName) throws IOException {
 
         List<String> urls = new ArrayList<>();
@@ -62,7 +68,7 @@ public class AwsS3Service {
                 }));
         System.out.println(awsS3s.get(0));
 
-        List<String> pills = getPillName(awsS3s);
+        List<AIPillINameAndImageDto> pills = getPillName(awsS3s);
 //
 //        return pillNameAndImageUrlDto.builder()
 //                .pillName(pills)
@@ -73,14 +79,13 @@ public class AwsS3Service {
 //        pills.add("화이투벤큐");
 //        pills.add("마그놀정");
 
-        return pillNameAndImageUrlDto.builder()
-                .pillName(pills)
-                .imageUrls(urls)
-                .build();
+        return pills;
     }
 
-    private List<String> getPillName(List<JSONObject> awsS3){
+    private List<AIPillINameAndImageDto> getPillName(List<JSONObject> awsS3) throws IOException, ParseException {
         URI url = URI.create(AI_SERVER_HOST);
+        ObjectMapper mapper = new ObjectMapper();
+        JSONParser jsonParser = new JSONParser();
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -97,13 +102,23 @@ public class AwsS3Service {
 
         ResponseEntity<JSONObject> response = restTemplate.exchange(url, HttpMethod.POST, entity, JSONObject.class);
 
-        List<String> pills = (List<String>) response.getBody().get("result");
+        String jsonStr = mapper.writeValueAsString(response.getBody().get("result"));
+
+        List<JSONObject> pills = (List<JSONObject>) jsonParser.parse(jsonStr);
+//        List<JSONObject> pills = (List<JSONObject>) response.getBody().get("result");
+        System.out.println(pills);
 
         if(pills.size() == 0){
             throw new NotFoundPillException();
         }
 
-        return pills;
+        List<AIPillINameAndImageDto> aiPillINameAndImageDtos = pills.stream()
+                .map((p) -> AIPillINameAndImageDto.builder()
+                        .pillName((String) p.get("name"))
+                        .pillImageUrl((String) p.get("image"))
+                        .build())
+                .collect(Collectors.toList());
+        return aiPillINameAndImageDtos;
     }
 
     private AwsS3 upload(File file, String dirName) {

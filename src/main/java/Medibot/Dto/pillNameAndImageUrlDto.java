@@ -10,13 +10,18 @@ import java.util.List;
 @NoArgsConstructor
 public class pillNameAndImageUrlDto {
 
-    private List<String> pillName;
+    private List<AIPillINameAndImageDto> pillName;
 
-    private List<String> imageUrls;
+//    private List<String> imageUrls;
 
     @Builder
-    public pillNameAndImageUrlDto(List<String> pillName, List<String> imageUrls) {
+    public pillNameAndImageUrlDto(List<AIPillINameAndImageDto> pillName) {
         this.pillName = pillName;
-        this.imageUrls = imageUrls;
     }
+//    public pillNameAndImageUrlDto(List<String> pillName, List<String> imageUrls) {
+//        this.pillName = pillName;
+//        this.imageUrls = imageUrls;
+//    }
+
+
 }
